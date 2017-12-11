@@ -1,5 +1,7 @@
 package com.liwinner.mylive.params;
 
+import android.hardware.Camera;
+
 /**
  * Created by liwinner on 2017/11/30.
  */
@@ -13,17 +15,22 @@ public class VideoParams {
     /**
      * 玩游戏的都知道，哈哈
      */
-    private int fps = 60;
+    private int fps = 30;
 
     private int width = 1280;
     private int height = 720;
     /**
      * 前、后摄像头
      */
-    private int cameraId;
+    private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
 
-    public VideoParams(int cameraId) {
+    public VideoParams(int width,int height,int cameraId) {
         this.cameraId = cameraId;
+        this.width = width;
+        this.height = height;
+    }
+
+    private VideoParams() {
     }
 
     public int getBitrate() {

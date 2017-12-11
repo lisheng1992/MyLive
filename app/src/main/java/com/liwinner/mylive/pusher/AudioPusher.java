@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
+import com.liwinner.mylive.jin.PusherNative;
 import com.liwinner.mylive.params.AudioParams;
 
 /**
@@ -15,14 +16,15 @@ public class AudioPusher extends BasePusher {
     private AudioRecord mAudioRecord;
 
     private AudioParams mAudioParams;
+    private PusherNative mPusherNative;
     /**
      * 缓冲区大小
      */
     private int minBufferSize;
     private boolean isRecording;
     private static final int AUDIO_RORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private AudioPusher(AudioRecord audioRecord, AudioParams audioParams) {
-        this.mAudioRecord = audioRecord;
+    public AudioPusher(PusherNative pusherNative, AudioParams audioParams) {
+        this.mPusherNative = pusherNative;
         this.mAudioParams = audioParams;
         int channelConfig = audioParams.getChannel() == 1 ? AudioFormat.CHANNEL_IN_MONO:AudioFormat.CHANNEL_IN_STEREO;
         minBufferSize = AudioRecord.getMinBufferSize(mAudioParams.getSampleRateInHz(),channelConfig,AUDIO_RORMAT);
@@ -33,7 +35,8 @@ public class AudioPusher extends BasePusher {
     @Override
     public void startPush() {
         isRecording = true;
-        new Thread(new AudioRecordRunnale()).start();
+        mPusherNative.setAudioOptions(mAudioParams.getSampleRateInHz(),mAudioParams.getChannel());
+        new Thread(new AudioRecordRunnable()).start();
     }
 
     @Override
@@ -50,7 +53,7 @@ public class AudioPusher extends BasePusher {
         }
     }
 
-    class AudioRecordRunnale implements Runnable{
+    class AudioRecordRunnable implements Runnable{
         @Override
         public void run() {
             mAudioRecord.startRecording();
@@ -59,6 +62,7 @@ public class AudioPusher extends BasePusher {
                 int len = mAudioRecord.read(buffer,0,minBufferSize);
                 if (len > 0) {
                     //TODO 把PCM音频数据交给Native层编码
+                    mPusherNative.sendAudioData(buffer);
                 }
             }
         }

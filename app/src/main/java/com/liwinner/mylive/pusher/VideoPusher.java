@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import com.liwinner.mylive.jin.PusherNative;
 import com.liwinner.mylive.params.VideoParams;
 
 import java.io.IOException;
@@ -24,16 +25,19 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
     private int iDegrees;
     private byte[] buffers;
     private Context mContext;
-    public VideoPusher(SurfaceHolder surfaceHolder, VideoParams videoParams, Context context) {
+    private PusherNative mPusherNative;
+    public VideoPusher(Context context,SurfaceHolder surfaceHolder, VideoParams videoParams, PusherNative pusherNative) {
         this.mSurfaceHolder = surfaceHolder;
         this.mVideoParams = videoParams;
         this.mContext = context;
+        this.mPusherNative = pusherNative;
         mSurfaceHolder.addCallback(this);
     }
 
     @Override
     public void startPush() {
-
+        mPusherNative.setVideoOptions(mVideoParams.getWidth(),mVideoParams.getHeight(),mVideoParams.getBitrate(),mVideoParams.getFps());
+        isPushing = true;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
 
     @Override
     public void release() {
-
+        stopPreview();
     }
 
     @Override
@@ -53,12 +57,12 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
         mCamera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
                 if (success) {
                     startPreview();
+                    camera.cancelAutoFocus();//只有加上了这一句，才会自动对焦
                 }
             }
         });
@@ -76,7 +80,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
         }
         if(isPushing){
             //回调函数中获取图像数据，然后给Native代码编码
-            //pushNative.fireVideo(data);
+            mPusherNative.sendVideoData(bytes);
         }
     }
     /**
@@ -86,20 +90,26 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
         try{
             //SurfaceView初始化完成，开始相机预览
             iDegrees = getDisplayOritation(getDispalyRotation(),mVideoParams.getCameraId());
-            mCamera = Camera.open(mVideoParams.getCameraId());
+            if (mCamera == null) {
+                mCamera = Camera.open(mVideoParams.getCameraId());
+            }
             Camera.Parameters parameters = mCamera.getParameters();
             //设置相机参数
             parameters.setPreviewFormat(ImageFormat.NV21); //YUV 预览图像的像素格式
             parameters.setPreviewSize(mVideoParams.getHeight(), mVideoParams.getWidth()); //预览画面宽高
             parameters.setPreviewFrameRate(mVideoParams.getFps());
+            mCamera.setDisplayOrientation(iDegrees);
+            parameters.setRotation(iDegrees);
             mCamera.setParameters(parameters);
             //获取预览图像数据
-            buffers = new byte[mVideoParams.getWidth() * mVideoParams.getHeight() * 4];
+            if (buffers == null) {
+                buffers = new byte[mVideoParams.getWidth() * mVideoParams.getHeight() * 4];
+            }
             mCamera.addCallbackBuffer(buffers);
             mCamera.setPreviewCallbackWithBuffer(this);
+            mCamera.setPreviewDisplay(mSurfaceHolder);
             //只有加上了这一句，才会自动对焦。
             mCamera.cancelAutoFocus();
-            mCamera.setPreviewDisplay(mSurfaceHolder);
             mCamera.startPreview();
         }catch (IOException e){
             e.printStackTrace();
