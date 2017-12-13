@@ -1,4 +1,4 @@
-package com.liwinner.mylive.jin;
+package com.liwinner.mylive.jni;
 
 import com.liwinner.mylive.listener.LiveStateChangeListener;
 
@@ -7,7 +7,12 @@ import com.liwinner.mylive.listener.LiveStateChangeListener;
  */
 
 public class PusherNative {
+    public static final int CONNECT_FAILED = 101;
+    public static final int INIT_FAILED = 102;
 
+    static{
+        System.loadLibrary("my-live");
+    }
     private LiveStateChangeListener mLiveStateChangeListener;
 
     public void setLiveStateChangeListener(LiveStateChangeListener liveStateChangeListener) {
@@ -30,9 +35,9 @@ public class PusherNative {
 
     public  native void setAudioOptions(int sampleRateInHz,int channel);
 
-    public  native void sendVideoData(byte[] data);
+    public  native void fireVideo(byte[] data);
 
-    public  native void sendAudioData(byte[] data);
+    public  native void fireAudio(byte[] data);
 
     public void removeLiveStateChangeListener() {
         mLiveStateChangeListener = null;

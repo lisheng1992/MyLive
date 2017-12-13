@@ -11,33 +11,45 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             native-lib
-
+             my-live
              # Sets the library as a shared library.
              SHARED
-
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp )
+             src/main/cpp/dn_live.c
+             src/main/cpp/queue.c)
 
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because CMake includes system libraries in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
 
 find_library( # Sets the name of the path variable.
               log-lib
-
               # Specifies the name of the NDK library that
               # you want CMake to locate.
               log )
-
-# Specifies libraries CMake should link to your target library. You
-# can link multiple libraries, such as libraries you define in this
-# build script, prebuilt third-party libraries, or system libraries.
-
+add_library(faac
+            STATIC
+            IMPORTED
+            )
+set_target_properties(faac
+                      PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libfaac.a)
+add_library(rtmp
+            STATIC
+            IMPORTED
+            )
+set_target_properties(rtmp
+                      PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/librtmp.a)
+add_library(x264
+            STATIC
+            IMPORTED
+            )
+set_target_properties(x264
+                      PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libx264.a)
+include_directories(src/main/cpp/faac/include)
+include_directories(src/main/cpp/rtmpdump/include)
+include_directories(src/main/cpp/x264/include)
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       my-live faac rtmp x264
 
                        # Links the target library to the log library
                        # included in the NDK.

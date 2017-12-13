@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.liwinner.mylive.jin.PusherNative;
+import com.liwinner.mylive.jni.PusherNative;
 import com.liwinner.mylive.params.VideoParams;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
         }
         if(isPushing){
             //回调函数中获取图像数据，然后给Native代码编码
-            mPusherNative.sendVideoData(bytes);
+            mPusherNative.fireVideo(bytes);
         }
     }
     /**

@@ -4,7 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
-import com.liwinner.mylive.jin.PusherNative;
+import com.liwinner.mylive.jni.PusherNative;
 import com.liwinner.mylive.params.AudioParams;
 
 /**
@@ -62,7 +62,7 @@ public class AudioPusher extends BasePusher {
                 int len = mAudioRecord.read(buffer,0,minBufferSize);
                 if (len > 0) {
                     //TODO 把PCM音频数据交给Native层编码
-                    mPusherNative.sendAudioData(buffer);
+                    mPusherNative.fireAudio(buffer);
                 }
             }
         }

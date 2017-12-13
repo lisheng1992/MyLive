@@ -4,7 +4,7 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 
-import com.liwinner.mylive.jin.PusherNative;
+import com.liwinner.mylive.jni.PusherNative;
 import com.liwinner.mylive.listener.LiveStateChangeListener;
 import com.liwinner.mylive.params.AudioParams;
 import com.liwinner.mylive.params.VideoParams;
@@ -87,6 +87,7 @@ public class LivePusher implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        stopPush();
+        release();
     }
 }
