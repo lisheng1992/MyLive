@@ -9,17 +9,18 @@
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/rtmp_url_et"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:text="rtmp://192.168.1.172:1935/lisheng/123"/>
+        android:text="rtmp://192.168.1.172:1935/live/stream"/>
 
     <Button
-        android:id="@+id/start_push_bt"
-        android:layout_width="368dp"
+        android:id="@+id/normal_start_push_bt"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="58dp"
-        android:text="开始推流"/>
+        android:text="正常推流"/>
+    <Button
+        android:id="@+id/beauty_start_push_bt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="美白推流"/>
 </LinearLayout>

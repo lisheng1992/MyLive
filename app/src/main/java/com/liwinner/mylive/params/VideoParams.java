@@ -15,10 +15,10 @@ public class VideoParams {
     /**
      * 玩游戏的都知道，哈哈
      */
-    private int fps = 30;
+    private int fps = 25;
 
-    private int width = 1280;
-    private int height = 720;
+    private int width ;
+    private int height ;
     /**
      * 前、后摄像头
      */

@@ -20,10 +20,14 @@ public class StartActivity extends AppCompatActivity {
 
     @BindView(R.id.rtmp_url_et)
     AppCompatEditText rtmpUrlEt;
-    @BindView(R.id.start_push_bt)
-    Button startPushBt;
+
 
     private static final int PERMISSION_RECORD_AUDIO = 100;
+    @BindView(R.id.normal_start_push_bt)
+    Button mNormalStartPushBt;
+    @BindView(R.id.beauty_start_push_bt)
+    Button mBeautyStartPushBt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +36,17 @@ public class StartActivity extends AppCompatActivity {
         initView();
     }
 
-    @OnClick(R.id.start_push_bt)
-    void startPush() {
-        Intent intent = new Intent(StartActivity.this,MainActivity.class);
-        intent.putExtra("RtmpUrl",rtmpUrlEt.getText().toString());
+    @OnClick(R.id.normal_start_push_bt)
+    void startNormalPush() {
+        Intent intent = new Intent(StartActivity.this, MainActivity.class);
+        intent.putExtra("RtmpUrl", rtmpUrlEt.getText().toString());
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.beauty_start_push_bt)
+    void startBeautyPush() {
+        Intent intent = new Intent(StartActivity.this, BeautyActivity.class);
+        intent.putExtra("RtmpUrl", rtmpUrlEt.getText().toString());
         startActivity(intent);
     }
 
@@ -46,7 +57,7 @@ public class StartActivity extends AppCompatActivity {
             //运行时申请权限
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA},
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                     PERMISSION_RECORD_AUDIO);
         } else {
             //权限已申请
@@ -61,7 +72,6 @@ public class StartActivity extends AppCompatActivity {
                     grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "权限已申请", Toast.LENGTH_SHORT).show();
             } else {
-                startPushBt.setClickable(false);
                 Toast.makeText(this, "没有权限！", Toast.LENGTH_SHORT).show();
             }
             return;

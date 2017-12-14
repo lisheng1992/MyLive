@@ -20,6 +20,7 @@ public class LivePusher implements SurfaceHolder.Callback {
     private AudioPusher mAudioPusher;
     private PusherNative mPusherNative;
     private Context mContext;
+
     public LivePusher(SurfaceHolder surfaceHolder,Context context){
         mSurfaceHolder = surfaceHolder;
         mSurfaceHolder.addCallback(this);
@@ -32,7 +33,7 @@ public class LivePusher implements SurfaceHolder.Callback {
         AudioParams audioParams = new AudioParams();
         mAudioPusher = new AudioPusher(mPusherNative,audioParams);
 
-        VideoParams videoParams = new VideoParams(720,1280, Camera.CameraInfo.CAMERA_FACING_BACK);
+        VideoParams videoParams = new VideoParams(1280,720, Camera.CameraInfo.CAMERA_FACING_BACK);
         mVideoPusher = new VideoPusher(mContext,mSurfaceHolder,videoParams,mPusherNative);
     }
 

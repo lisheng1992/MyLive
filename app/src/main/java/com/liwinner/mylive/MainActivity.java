@@ -86,6 +86,12 @@ public class MainActivity extends AppCompatActivity implements LiveStateChangeLi
 
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
     public void onError(int code) {
         handler.sendEmptyMessage(code);
     }

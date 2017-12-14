@@ -57,7 +57,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+        /*mCamera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
                 if (success) {
@@ -65,7 +65,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
                     camera.cancelAutoFocus();//只有加上了这一句，才会自动对焦
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -87,31 +87,30 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
      * 初始化相机，开始预览
      */
     private void startPreview() {
-        try{
+        try {
             //SurfaceView初始化完成，开始相机预览
-            iDegrees = getDisplayOritation(getDispalyRotation(),mVideoParams.getCameraId());
             if (mCamera == null) {
                 mCamera = Camera.open(mVideoParams.getCameraId());
             }
             Camera.Parameters parameters = mCamera.getParameters();
             //设置相机参数
             parameters.setPreviewFormat(ImageFormat.NV21); //YUV 预览图像的像素格式
-            parameters.setPreviewSize(mVideoParams.getHeight(), mVideoParams.getWidth()); //预览画面宽高
-            parameters.setPreviewFrameRate(mVideoParams.getFps());
-            mCamera.setDisplayOrientation(iDegrees);
-            parameters.setRotation(iDegrees);
+            parameters.setPreviewSize(mVideoParams.getWidth(), mVideoParams.getHeight()); //预览画面宽高
+            int iDegress = getDisplayOritation(getDispalyRotation(),mVideoParams.getCameraId());
+            mCamera.setDisplayOrientation(iDegress);
+            parameters.setRotation(iDegress);
             mCamera.setParameters(parameters);
+            //parameters.setPreviewFpsRange(videoParams.getFps()-1, videoParams.getFps());
+            mCamera.setPreviewDisplay(mSurfaceHolder);
             //获取预览图像数据
             if (buffers == null) {
                 buffers = new byte[mVideoParams.getWidth() * mVideoParams.getHeight() * 4];
             }
+
             mCamera.addCallbackBuffer(buffers);
             mCamera.setPreviewCallbackWithBuffer(this);
-            mCamera.setPreviewDisplay(mSurfaceHolder);
-            //只有加上了这一句，才会自动对焦。
-            mCamera.cancelAutoFocus();
             mCamera.startPreview();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -146,6 +145,7 @@ public class VideoPusher extends BasePusher implements SurfaceHolder.Callback ,C
                 return 180;
             case Surface.ROTATION_270:
                 return 270;
+            default:
         }
         return 0;
     }
